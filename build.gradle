@@ -3,7 +3,7 @@ version '1.0'
 
 apply plugin: 'java'
 
-def jdkVersion = 1.7
+def jdkVersion = 1.8
 sourceCompatibility = jdkVersion
 targetCompatibility = jdkVersion
 
