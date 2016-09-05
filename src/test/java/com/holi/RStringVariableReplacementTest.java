@@ -14,7 +14,7 @@ import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
 /**
  * Created by selonj on 16-9-5.
  */
-public class RStringReplacementTest {
+public class RStringVariableReplacementTest {
   @Test public void returnDirectlyIfReplaceAStringLiteral() throws Exception {
     String result = replace("string", emptyMap());
 
