@@ -10,23 +10,23 @@ import static java.util.Arrays.asList;
  */
 public interface Replaceable {
 
-  String replace(Context<String, Object> context);
+  Replaceable replace(Context<String, Object> context);
 
-  String replace(String regex, Context<Context<Integer, String>, String> context);
+  Replaceable replace(String regex, Context<Context<Integer, String>, String> context);
 
-  default String replace(Map<String, Object> variables) {
+  default Replaceable replace(Map<String, Object> variables) {
     return replace(variables::get);
   }
 
-  default String replace(Object... values) {
+  default Replaceable replace(Object... values) {
     return replace(asList(values));
   }
 
-  default String replace(Iterable<Object> values) {
+  default Replaceable replace(Iterable<Object> values) {
     return replace(values.iterator());
   }
 
-  default String replace(Iterator<Object> values) {
+  default Replaceable replace(Iterator<Object> values) {
     return replace(name -> values.hasNext() ? values.next() : null);
   }
 

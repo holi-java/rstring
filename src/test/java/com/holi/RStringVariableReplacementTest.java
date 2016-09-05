@@ -94,11 +94,13 @@ public class RStringVariableReplacementTest {
   }
 
   private String replace(String string, Object... values) {
-    return new RString(string).replace(values);
+    RString result = RString.valueOf(string).replace(values);
+    return result.toString();
   }
 
   private String replace(String string, Map<String, Object> variables) {
-    return new RString(string).replace(variables);
+    RString result = RString.valueOf(string).replace(variables);
+    return result.toString();
   }
 
   private Map<String, Object> with(String... variables) {

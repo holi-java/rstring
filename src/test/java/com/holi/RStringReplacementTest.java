@@ -11,43 +11,43 @@ import static org.junit.Assert.assertThat;
  */
 public class RStringReplacementTest {
   @Test public void replaceAllIfAllMatched() throws Exception {
-    RString foo = new RString("foo");
+    RString foo = RString.valueOf("foo");
 
-    String result = foo.replace("[a-z]", toUpperCase());
+    RString result = foo.replace("[a-z]", toUpperCase());
 
-    assertThat(result, equalTo("FOO"));
+    assertThat(result.toString(), equalTo("FOO"));
   }
 
   @Test public void returnDirectlyIfMismatched() throws Exception {
-    RString foo = new RString("0");
+    RString foo = RString.valueOf("0");
 
-    String result = foo.replace("^[a-z]", toUpperCase());
+    RString result = foo.replace("^[a-z]", toUpperCase());
 
-    assertThat(result, equalTo("0"));
+    assertThat(result.toString(), equalTo("0"));
   }
 
   @Test public void preserveTheHeadingMismatched() throws Exception {
-    RString foo = new RString("1f");
+    RString foo = RString.valueOf("1f");
 
-    String result = foo.replace("[a-z]", toUpperCase());
+    RString result = foo.replace("[a-z]", toUpperCase());
 
-    assertThat(result, equalTo("1F"));
+    assertThat(result.toString(), equalTo("1F"));
   }
 
   @Test public void preserveTheSurroundingMismatched() throws Exception {
-    RString foo = new RString("f1f");
+    RString foo = RString.valueOf("f1f");
 
-    String result = foo.replace("[a-z]", toUpperCase());
+    RString result = foo.replace("[a-z]", toUpperCase());
 
-    assertThat(result, equalTo("F1F"));
+    assertThat(result.toString(), equalTo("F1F"));
   }
 
   @Test public void preserveTheTailingMismatched() throws Exception {
-    RString foo = new RString("f1");
+    RString foo = RString.valueOf("f1");
 
-    String result = foo.replace("[a-z]", toUpperCase());
+    RString result = foo.replace("[a-z]", toUpperCase());
 
-    assertThat(result, equalTo("F1"));
+    assertThat(result.toString(), equalTo("F1"));
   }
 
   private Context<Context<Integer, String>, String> toUpperCase() {
