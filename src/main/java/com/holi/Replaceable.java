@@ -10,7 +10,9 @@ import static java.util.Arrays.asList;
  */
 public interface Replaceable {
 
-  String replace(Context context);
+  String replace(Context<String, Object> context);
+
+  String replace(String regex, Context<Context<Integer, String>, String> context);
 
   default String replace(Map<String, Object> variables) {
     return replace(variables::get);
@@ -28,7 +30,7 @@ public interface Replaceable {
     return replace(name -> values.hasNext() ? values.next() : null);
   }
 
-  @FunctionalInterface interface Context {
-    Object get(String name);
+  @FunctionalInterface interface Context<K, V> {
+    V get(K name);
   }
 }
