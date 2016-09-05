@@ -1,9 +1,9 @@
 package com.holi;
 
-import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
 
+import static com.holi.utils.MappedVariables.with;
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -101,14 +101,5 @@ public class RStringVariableReplacementTest {
   private String replace(String string, Map<String, Object> variables) {
     RString result = RString.valueOf(string).replace(variables);
     return result.toString();
-  }
-
-  private Map<String, Object> with(String... variables) {
-    HashMap<String, Object> result = new HashMap<>();
-    for (String variable : variables) {
-      String[] pair = variable.split("=");
-      result.put(pair[0], pair[1]);
-    }
-    return result;
   }
 }
