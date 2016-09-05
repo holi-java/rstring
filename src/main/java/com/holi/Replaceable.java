@@ -30,7 +30,7 @@ public interface Replaceable {
     return replace(name -> values.hasNext() ? values.next() : null);
   }
 
-  @FunctionalInterface interface Context<K, V> {
-    V get(K name);
+  @FunctionalInterface interface Context<T, R> {
+    R get(T context);
   }
 }
