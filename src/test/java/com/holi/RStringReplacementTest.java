@@ -87,6 +87,12 @@ public class RStringReplacementTest {
     assertThat(result, equalTo("bar"));
   }
 
+  @Test public void ignoringReplaceVariableExpressionStartsWithEscapeChar() throws Exception {
+    String result = replace("\\{foo}", emptyMap());
+
+    assertThat(result, equalTo("{foo}"));
+  }
+
   private String replace(String string, Object... values) {
     return new RString(string).replace(values);
   }

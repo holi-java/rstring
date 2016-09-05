@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
  */
 public class RString implements Replaceable {
   private String string;
-  private static final Pattern VARIABLE_PATTERN = Pattern.compile("\\{([^{}]+)\\}");
+  private static final Pattern VARIABLE_PATTERN = Pattern.compile("(?<![\\\\])\\{([^{}]+)\\}");
 
   public RString(String string) {
     this.string = string;
@@ -22,7 +22,7 @@ public class RString implements Replaceable {
     while (matcher.find()) {
       int start = matcher.start();
       if (pos < start) {
-        result.append(string.substring(pos, start));
+        result.append(literal(string.substring(pos, start)));
       }
 
       String name = matcher.group(1).trim();
@@ -31,9 +31,13 @@ public class RString implements Replaceable {
       pos = matcher.end();
     }
 
-    result.append(string.substring(pos));
+    result.append(literal(string.substring(pos)));
 
     return result.toString();
+  }
+
+  private CharSequence literal(String source) {
+    return source.replace("\\", "");
   }
 
   private Object value(String name, Context context) {
