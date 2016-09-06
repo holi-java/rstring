@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
  */
 public class RString implements Replaceable {
   private static final int VARIABLE_GROUP = 2;
-  private static final int LITERAL_GROUP = 1;
-  private static final String VARIABLE_REGEX = "\\\\([{}])|\\{([^{}]+)\\}";
+  private static final int ESCAPING_GROUP = 1;
+  private static final String EXPRESSION_REGEX = "\\\\([{}])|\\{([^{}]+)\\}";
 
   private CharSequence sequence;
 
@@ -45,7 +45,7 @@ public class RString implements Replaceable {
   }
 
   public RString replace(Context<String, Object> context) throws MissingValueException {
-    return replace(VARIABLE_REGEX, expandVariables(failsWhenVariableMissing(context)));
+    return replace(EXPRESSION_REGEX, expandVariables(failsWhenVariableMissing(context)));
   }
 
   private Context<String, String> failsWhenVariableMissing(Context<String, Object> context) {
@@ -58,8 +58,8 @@ public class RString implements Replaceable {
 
   private static Context<Context<Integer, String>, String> expandVariables(Context<String, String> context) {
     return (groups) -> {
-      String literal = groups.get(LITERAL_GROUP);
-      if (literal != null) return literal;
+      String escaped = groups.get(ESCAPING_GROUP);
+      if (escaped != null) return escaped;
 
       String name = groups.get(VARIABLE_GROUP).trim();
       return context.get(name);
