@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 public class RString implements Replaceable {
   private static final int VARIABLE_GROUP = 2;
   private static final int LITERAL_GROUP = 1;
-  private static final String PATTERN_REGEX = "\\\\([{}])|\\{([^{}]+)\\}";
+  private static final String VARIABLE_REGEX = "\\\\([{}])|\\{([^{}]+)\\}";
 
   private CharSequence sequence;
 
@@ -28,30 +28,42 @@ public class RString implements Replaceable {
     return new RString(sequence);
   }
 
-  @Override public RString replace(Object... values) {
+  @Override public RString replace(Object... values) throws MissingValueException {
     return (RString) Replaceable.super.replace(values);
   }
 
-  @Override public RString replace(Iterable<Object> values) {
+  @Override public RString replace(Iterable<Object> values) throws MissingValueException {
     return (RString) Replaceable.super.replace(values);
   }
 
-  @Override public RString replace(Iterator<Object> values) {
+  @Override public RString replace(Iterator<Object> values) throws MissingValueException {
     return (RString) Replaceable.super.replace(values);
   }
 
-  @Override public RString replace(Map<String, Object> variables) {
+  @Override public RString replace(Map<String, Object> variables) throws MissingValueException {
     return (RString) Replaceable.super.replace(variables);
   }
 
-  public RString replace(Context<String, Object> context) {
-    return replace(PATTERN_REGEX, (groups) -> {
+  public RString replace(Context<String, Object> context) throws MissingValueException {
+    return replace(VARIABLE_REGEX, expandVariables(failsWhenVariableMissing(context)));
+  }
+
+  private Context<String, String> failsWhenVariableMissing(Context<String, Object> context) {
+    return (name) -> {
+      Object value = context.get(name);
+      if (value == null) throw new MissingValueException("missing variable `" + name + "`!");
+      return value.toString();
+    };
+  }
+
+  private static Context<Context<Integer, String>, String> expandVariables(Context<String, String> context) {
+    return (groups) -> {
       String literal = groups.get(LITERAL_GROUP);
       if (literal != null) return literal;
 
       String name = groups.get(VARIABLE_GROUP).trim();
-      return value(name, context);
-    });
+      return context.get(name);
+    };
   }
 
   @Override public RString replace(String regex, Context<Context<Integer, String>, String> context) {
@@ -60,19 +72,17 @@ public class RString implements Replaceable {
     StringBuilder result = new StringBuilder();
     int pos = 0;
     while (matcher.find()) {
-      result.append(sequence.subSequence(pos, matcher.start()));//heading or surrounding
+      result.append(slice(pos, matcher.start()));//adds mismatched heading or surrounding
       result.append(context.get(matcher::group));
       pos = matcher.end();
     }
 
-    result.append(sequence.subSequence(pos, sequence.length()));//tailing
+    result.append(slice(pos, sequence.length()));//adds mismatched tailing
     return valueOf(result);
   }
 
-  private String value(String name, Context<String, Object> context) {
-    Object value = context.get(name);
-    if (value == null) throw new MissingValueException("missing variable `" + name + "`!");
-    return value.toString();
+  private CharSequence slice(int start, int end) {
+    return sequence.subSequence(start, end);
   }
 
   @Override public boolean equals(Object obj) {
