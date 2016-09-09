@@ -1,9 +1,10 @@
 package com.holi;
 
-import java.util.Iterator;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.holi.Context.failsWhenMissingValue;
+import static com.holi.Context.valueToString;
 
 /**
  * Created by selonj on 16-9-5.
@@ -28,32 +29,8 @@ public class RString implements Replaceable {
     return new RString(sequence);
   }
 
-  @Override public RString replace(Object... values) throws MissingValueException {
-    return (RString) Replaceable.super.replace(values);
-  }
-
-  @Override public RString replace(Iterable<Object> values) throws MissingValueException {
-    return (RString) Replaceable.super.replace(values);
-  }
-
-  @Override public RString replace(Iterator<Object> values) throws MissingValueException {
-    return (RString) Replaceable.super.replace(values);
-  }
-
-  @Override public RString replace(Map<String, Object> variables) throws MissingValueException {
-    return (RString) Replaceable.super.replace(variables);
-  }
-
   public RString replace(Context<String, Object> context) throws MissingValueException {
-    return replace(EXPRESSION_REGEX, expandVariables(failsWhenVariableMissing(context)));
-  }
-
-  private Context<String, String> failsWhenVariableMissing(Context<String, Object> context) {
-    return (name) -> {
-      Object value = context.get(name);
-      if (value == null) throw new MissingValueException("missing variable `" + name + "`!");
-      return value.toString();
-    };
+    return replace(EXPRESSION_REGEX, expandVariables(valueToString(failsWhenMissingValue(context))));
   }
 
   private static Context<Context<Integer, String>, String> expandVariables(Context<String, String> context) {
@@ -67,13 +44,14 @@ public class RString implements Replaceable {
   }
 
   @Override public RString replace(String regex, Context<Context<Integer, String>, String> context) {
+    Context<Context<Integer, String>, String> replacement = failsWhenMissingValue(context);
     Matcher matcher = Pattern.compile(regex).matcher(sequence);
 
     StringBuilder result = new StringBuilder();
     int pos = 0;
     while (matcher.find()) {
       result.append(slice(pos, matcher.start()));//adds mismatched heading or surrounding
-      result.append(context.get(matcher::group));
+      result.append(replacement.get(matcher::group));
       pos = matcher.end();
     }
 

@@ -3,6 +3,7 @@ package com.holi;
 import java.util.Map;
 import org.junit.Test;
 
+import static com.holi.Context.from;
 import static com.holi.utils.MappedVariables.with;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -40,19 +41,19 @@ public class RStringExample {
     RString string = RString.valueOf("{user}@example.com");
     Map<String, Object> variables = with("user=foo");
 
-    assertThat(string.replace(variables).toString(), equalTo("foo@example.com"));
+    assertThat(string.replace(from(variables)).toString(), equalTo("foo@example.com"));
   }
 
   @Test public void replaceVariableWithArrayValues() throws Exception {
     RString string = RString.valueOf("{user}@example.com");
     Object[] variables = {"foo"};
 
-    assertThat(string.replace(variables).toString(), equalTo("foo@example.com"));
+    assertThat(string.replace(from(variables)).toString(), equalTo("foo@example.com"));
   }
 
   @Test public void dropsEscapeCharAndIgnoringReplaceIfVariableExpressionStartsWithEscapeChar() throws Exception {
     RString string = RString.valueOf("\\{user\\}");
 
-    assertThat(string.replace("anything").toString(), equalTo("{user}"));
+    assertThat(string.replace(from("anything")).toString(), equalTo("{user}"));
   }
 }

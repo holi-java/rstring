@@ -1,10 +1,12 @@
 package com.holi;
 
-import com.holi.Replaceable.Context;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
 
 /**
  * Created by selonj on 16-9-5.
@@ -48,6 +50,18 @@ public class RStringReplacementTest {
     RString result = foo.replace("[a-z]", toUpperCase());
 
     assertThat(result.toString(), equalTo("F1"));
+  }
+
+  @Test public void throwsMissingValueExceptionIfReplaceGroupWithNullValue() throws Exception {
+    RString foo = RString.valueOf("f1");
+
+    try {
+      foo.replace(".*", name -> null);
+      fail("should failed");
+    } catch (MissingValueException expected) {
+      //todo how to report an diagnostic error message for `groups` not as lambda native toString()?
+      assertTrue(true);
+    }
   }
 
   private Context<Context<Integer, String>, String> toUpperCase() {

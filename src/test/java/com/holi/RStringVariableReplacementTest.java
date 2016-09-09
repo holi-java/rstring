@@ -3,6 +3,7 @@ package com.holi;
 import java.util.Map;
 import org.junit.Test;
 
+import static com.holi.Context.from;
 import static com.holi.utils.MappedVariables.with;
 import static java.util.Collections.emptyMap;
 import static org.hamcrest.Matchers.containsString;
@@ -94,12 +95,12 @@ public class RStringVariableReplacementTest {
   }
 
   private String replace(String string, Object... values) {
-    RString result = RString.valueOf(string).replace(values);
+    RString result = RString.valueOf(string).replace(from(values));
     return result.toString();
   }
 
   private String replace(String string, Map<String, Object> variables) {
-    RString result = RString.valueOf(string).replace(variables);
+    RString result = RString.valueOf(string).replace(from(variables));
     return result.toString();
   }
 }
