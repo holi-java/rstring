@@ -7,5 +7,5 @@ public interface Replaceable {
 
   Replaceable replace(Context<String, Object> context) throws MissingValueException;
 
-  Replaceable replace(String regex, Context<Context<Integer, String>, String> context);
+  Replaceable replace(String regex, Context<Context<Integer, String>, String> context) throws MissingValueException;
 }

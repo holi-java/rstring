@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import static com.holi.Context.failsWhenMissingValue;
 import static com.holi.Context.valueToString;
+import static java.util.regex.Pattern.compile;
 
 /**
  * Created by selonj on 16-9-5.
@@ -12,7 +13,7 @@ import static com.holi.Context.valueToString;
 public class RString implements Replaceable {
   private static final int VARIABLE_GROUP = 2;
   private static final int ESCAPING_GROUP = 1;
-  private static final String EXPRESSION_REGEX = "\\\\([{}])|\\{([^{}]+)\\}";
+  private static final Pattern EXPRESSION_PATTERN = Pattern.compile("\\\\([{}])|\\{([^{}]+)\\}");
 
   private CharSequence sequence;
 
@@ -30,7 +31,7 @@ public class RString implements Replaceable {
   }
 
   public RString replace(Context<String, Object> context) throws MissingValueException {
-    return replace(EXPRESSION_REGEX, expandVariables(valueToString(failsWhenMissingValue(context))));
+    return replace(EXPRESSION_PATTERN, expandVariables(valueToString(failsWhenMissingValue(context))));
   }
 
   private static Context<Context<Integer, String>, String> expandVariables(Context<String, String> context) {
@@ -43,9 +44,12 @@ public class RString implements Replaceable {
     };
   }
 
-  @Override public RString replace(String regex, Context<Context<Integer, String>, String> context) {
-    Context<Context<Integer, String>, String> replacement = failsWhenMissingValue(context);
-    Matcher matcher = Pattern.compile(regex).matcher(sequence);
+  @Override public RString replace(String regex, Context<Context<Integer, String>, String> context) throws MissingValueException {
+    return replace(compile(regex), failsWhenMissingValue(context));
+  }
+
+  public RString replace(Pattern pattern, Context<Context<Integer, String>, String> replacement) {
+    Matcher matcher = pattern.matcher(sequence);
 
     StringBuilder result = new StringBuilder();
     int pos = 0;
