@@ -2,6 +2,7 @@ package com.holi;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 import static java.util.Arrays.asList;
 
@@ -39,5 +40,17 @@ public interface Context<T, R> {
 
   static <T, R> Context<T, R> from(Iterator<R> values) {
     return name -> values.hasNext() ? values.next() : null;
+  }
+
+  static Context<Integer, String> groups(final Matcher matcher) {
+    return new Context<Integer, String>() {
+      @Override public String get(Integer group) {
+        return matcher.group(group);
+      }
+
+      @Override public String toString() {
+        return "groups";
+      }
+    };
   }
 }

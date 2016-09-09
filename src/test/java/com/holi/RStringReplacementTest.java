@@ -4,8 +4,8 @@ import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
 
 /**
  * Created by selonj on 16-9-5.
@@ -58,8 +58,7 @@ public class RStringReplacementTest {
       foo.replace(".*", name -> null);
       fail("should failed");
     } catch (MissingValueException expected) {
-      //todo how to report an diagnostic error message for `groups` not as lambda native toString()?
-      assertTrue(true);
+      assertThat(expected, hasMessage(equalTo("missing variable `groups`!")));
     }
   }
 

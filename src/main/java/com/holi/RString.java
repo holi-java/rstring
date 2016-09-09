@@ -48,19 +48,24 @@ public class RString implements Replaceable {
     return replace(compile(regex), failsWhenMissingValue(context));
   }
 
-  public RString replace(Pattern pattern, Context<Context<Integer, String>, String> replacement) {
+  public RString replace(Pattern pattern, Context<Context<Integer, String>, String> context) {
     Matcher matcher = pattern.matcher(sequence);
 
-    StringBuilder result = new StringBuilder();
-    int pos = 0;
-    while (matcher.find()) {
-      result.append(slice(pos, matcher.start()));//adds mismatched heading or surrounding
-      result.append(replacement.get(matcher::group));
-      pos = matcher.end();
+    if (matcher.find()) {
+      int pos = 0;
+      StringBuilder result = new StringBuilder();
+      Context<Integer, String> groups = Context.groups(matcher);
+
+      do {
+        result.append(slice(pos, matcher.start()));//adds mismatched heading or surrounding
+        result.append(context.get(groups));
+        pos = matcher.end();
+      } while (matcher.find());
+
+      return valueOf(result.append(slice(pos, sequence.length())));//adds mismatched tailing
     }
 
-    result.append(slice(pos, sequence.length()));//adds mismatched tailing
-    return valueOf(result);
+    return this;
   }
 
   private CharSequence slice(int start, int end) {
